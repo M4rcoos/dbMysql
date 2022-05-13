@@ -4,8 +4,9 @@ const app = express();
 const User = require("./models/Users");
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ success: true });
+app.get("/", async (req, res) => {
+  const users = await User.findAll();
+  res.json(users);
 });
 
 app.post("/cadastrar", async (req, res) => {
@@ -23,6 +24,22 @@ app.post("/cadastrar", async (req, res) => {
         mensage: "Usuario não cadastrado com sucesso!",
       });
     });
+});
+
+app.put("/update/:id", async (req, res) => {
+  await User.update(
+    {
+      nome: req.body.nome,
+      email: req.body.email,
+    },
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
+  );
+
+  User.findByPk(req.params.id).then((result) => res.json(result));
 });
 
 app.listen(3333, () => console.log("listening on port 3333"));
