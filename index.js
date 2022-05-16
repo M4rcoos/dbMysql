@@ -29,7 +29,7 @@ app.post("/cadastrar", async (req, res) => {
 app.put("/update/:id", async (req, res) => {
   await User.update(
     {
-      nome: req.body.nome,
+      name: req.body.name,
       email: req.body.email,
     },
     {
@@ -40,6 +40,24 @@ app.put("/update/:id", async (req, res) => {
   );
 
   User.findByPk(req.params.id).then((result) => res.json(result));
+});
+
+app.delete("/delete/:id", (req, res) => {
+  User.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then(function (deletedId) {
+      if (deletedId === 1) {
+        res.status(200).json({ message: "Deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Id not found" });
+      }
+    })
+    .catch(function (error) {
+      res.status(500).json(error);
+    });
 });
 
 app.listen(3333, () => console.log("listening on port 3333"));
